@@ -11,6 +11,8 @@ module Apache
     SectionOpen = /^\s*<\s*(\w+)(?:\s+([^>]+)|\s*)>$/
     SectionClose = /^\s*<\/\s*(\w+)\s*>$/
 
+    attr_reader :path
+
     def initialize(path)
       @path = path
       @config = parse_config(path)
@@ -18,6 +20,12 @@ module Apache
     
     def virtual_hosts
       @config.children.map { |vh| VirtualHost.new(vh) }
+    end
+
+    def save!
+      File.open(@path, 'w') do |f|
+        f.write to_config
+      end
     end
 
     def to_config(root = nil, indent = "")

@@ -42,4 +42,12 @@ APACHE
     
     assert_match "ServerAlias www.example.com foo.be", config.to_config
   end
+  
+  def test_saving
+    config = Apache::Config.new('/etc/apache2/example.conf')
+    config.virtual_hosts.first.aliases << 'foo.be'
+    config.save!
+
+    assert_match "ServerAlias www.example.com foo.be", File.read('/etc/apache2/example.conf')
+  end
 end
